@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Map Editor</title>
+    <style>
+        body{
+            background:#EEE;
+            margin: 0;
+            padding: 0;
+            font: Arial;
+        }
+        .new_map{
+            margin:5px 10px;
+        }
+        form#dialog label{
+            float:left;
+            width: 90px;
+        }
+        form#dialog input{ width: 30px; }
+        table#grid{ 
+            margin:30px;
+        }
+        table#grid tr td{ border: 1px solid black; }
+        .cel{
+            cursor:pointer;
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+        }        
+        .cel .x, .cel .y {            
+            margin: 2px;
+        }
+        .cel .x{
+            color: blue;
+            float:left;
+        }
+        .cel .y{
+            color: red;
+            float:right;
+        }
+        .toolbar{
+            padding: 6px;
+        }
+    </style>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+	    function clear_unique(type_cel){
+	    	var others = $(".cel").find("input[name=type_cel][value="+ type_cel +"]");	    			
+			others.each(function(){
+				var parent = $(this).closest(".cel");	    				
+				new Cel(parent).setType(" ");
+			});
+	    }
+        function check_type(){
+	    	var cel = new Cel(this);	    	
+	    	var checked = $("#types").find(":checked");
+	    	if (!checked.length){
+	    		alert("Selecione um tipo");
+	    	}
+	    	else{
+	    		var type_cel = checked.val();	    		
+	    		if (checked.filter(".unique").length){
+                    clear_unique(type_cel);
+	    		}
+	    		cel.setType(type_cel);
+	    	}        	
+	    }
+        // Cria objeto celula apartir de um elemento
+        function Cel(element){
+        	this.element = cel = $(element);
+        	this.x = this.element.find(".x").text();
+        	this.y = this.element.find(".y").text();
+        	this.setType = function(type){
+        		this.element.find("input[name=type_cel]").val(type);
+        		this.element.find(".content").text(type);
+        	}
+        }        
+        // Cria um elemento html do tipo celula para o grid
+        function new_element_cel(i,j){
+        	var y = $("<div />").attr("class","x").text(i);
+        	var x = $("<div />").attr("class","y").text(j);
+        	var text = $("<div />").attr("class","content");
+        	var type = $("<input type='hidden' value='' name='type_cel' />");
+        	var cel = $("<div class='cel' />").append(y)
+        	                                  .append(x)
+        	                                  .append(text)
+        	                                  .append(type);
+        	
+        	cel.click(check_type);
+            return cel;
+        }
+
+        function new_grid(map){
+            var grid = $("<table id='grid' />");
+            for (var i = 0 ; i < map.len_lines ; i++){
+                var line = $("<tr />");         
+                grid.append(line);
+                for (var j = 0; j < map.len_columns; j++){
+                    var col = $("<td />");
+                    col.append(new_element_cel(i,j));
+                    line.append(col);
+                }    
+            }
+            return grid;
+        }
+
+        function Map(len_lines,len_columns){
+        	this.len_lines = len_lines;
+        	this.len_columns = len_columns;
+        }
+
+        $(function(){
+            var map = null;
+            var _content = $("#content");
+            var _result = $("#result");
+            _result.find("textarea").hide();
+            
+            $(".spinner").spinner();            
+            $(".button").button();
+            $("#types").buttonset();
+
+            $(".new_map").click(function(){
+            	var box_dialog = $("#dialog");
+            	box_dialog.dialog({
+            	    modal: true,
+            	    buttons:{
+            	    	'Criar' : function(){
+            	    		var len_lines = box_dialog.find("input[name=len_lines]").val();
+            	    		var len_columns = box_dialog.find("input[name=len_columns]").val();
+            	    		map = new Map(len_lines,len_columns);
+
+            	    		var grid = new_grid(map);
+                            _content.html(grid);
+                            $(this).dialog("close");
+            	    	}
+            	    }
+            	});
+            });
+            
+            $(".build").click(function(){
+                var textarea = $("#result textarea").show();
+                var xml = $("#result #xml");
+
+                var tagmap = $("<map />");
+                xml.append(tagmap);
+
+                tagmap.attr("columns",map.len_columns);
+                tagmap.attr("lines",map.len_lines);
+
+                textarea.val(xml.html());
+            });
+        });
+    </script>
+</head>
+<body>
+    <form id="dialog" action="" method="get" style="display:none;">
+        <div>
+            <label for="len_lines">Lines</label>
+            <input type="text" id="len_lines" name="len_lines" class="spinner" />
+        </div>
+        <div>
+            <label for="len_columns">Columns</label>
+            <input type="text" id="len_columns" name="len_columns" class="spinner"/>
+        </div>
+    </form>
+    
+    <div id="header" class="toolbar ui-widget-header ui-corner-all">
+        <span id="logo">Hero Master</span>
+        <button class="new_map button">New Map</button>
+        <button class="build button">Build XML</button>
+    </div>
+    
+    <div class="toolbar ui-widget-header ui-corner-all">                 
+        <fieldset id="types">
+            Types:            
+            <input class="unique" type="radio" name="type" id="type_begin" value="begin"/>
+	        <label for="type_begin">Begin</label>
+	        <input class="unique" type="radio" name="type" id="type_end" value="end"/>
+	        <label for="type_end">End</label>
+	        <input type="radio" name="type" id="type_path" value="path"/>
+	        <label for="type_path">Path</label>
+        </fieldset>                
+    </div>
+    
+    
+    <div id="content">
+
+    </div>
+    
+    <div id="result">
+        <textarea></textarea>
+        <div id="xml"></div>
+    </div>
+</body>
+</html>
