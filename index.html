@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>Map Editor</title>
+    <title>Board Editor</title>
     
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css" />
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -60,6 +60,9 @@
         }
         .navbar{
             margin-bottom: 0;
+        }
+        #result textarea{
+            width:100%;
         }
     </style>
     <script type="text/javascript">
@@ -132,7 +135,7 @@
             var map = null;
             var _content = $("#content");
             var _result = $("#result");
-            _result.find("textarea").hide();
+            _result.hide();
             
             $(".spinner").spinner();            
             $(".button").button();
@@ -157,17 +160,25 @@
             });
             
             $(".build").click(function(){
-                var textarea = $("#result textarea").show();
-                var xml = $("#result #xml");
+            	var result = $("#result");
+                var textarea = result.find("textarea");
+                var xml = $("#result #xml").html("");
 
-                var tagmap = $("<map />");
+                var tagmap = $("<board />");
                 xml.append(tagmap);
 
                 tagmap.attr("columns",map.len_columns);
                 tagmap.attr("lines",map.len_lines);
 
                 textarea.val(xml.html());
+                
+                result.slideDown();
             });
+            /*
+            $('input[name=len_lines]').val(5);
+            $('input[name=len_columns]').val(5);
+            $(".new_map").click();
+            */
         });
     </script>
 </head>
@@ -202,32 +213,39 @@
                 </ul>
             </div>
         </div>
-    </div>
-
-    <div class="navbar navbar-default">
-        <div class="container">
-            <fieldset id="types">
-                Types:            
-                <input class="unique" type="radio" name="type" id="type_begin" value="begin"/>
-	            <label for="type_begin">Begin</label>
-	            <input class="unique" type="radio" name="type" id="type_end" value="end"/>
-	            <label for="type_end">End</label>
-	            <input type="radio" name="type" id="type_path" value="path"/>
-	            <label for="type_path">Path</label>
-            </fieldset>
-        
+    </div>   
+    
+    
+    <div class="container">
+	    <div class="navbar navbar-default">
+	        <div class="container">
+	            <fieldset id="types">
+	                Types:            
+	                <input class="unique" type="radio" name="type" id="type_begin" value="begin"/>
+		            <label for="type_begin">Begin</label>
+		            <input class="unique" type="radio" name="type" id="type_end" value="end"/>
+		            <label for="type_end">End</label>
+		            <input type="radio" name="type" id="type_path" value="path"/>
+		            <label for="type_path">Path</label>
+	            </fieldset>
+	        
+	        </div>                        
+	    </div>
+        <div class="panel panel-default">
+            <div id="content"></div>
         </div>
-                        
-    </div>
-    
-    
-    <div id="content" class="container">
-
-    </div>
-    
-    <div id="result">
-        <textarea></textarea>
+        <div id="result" class="panel panel-default">
+            <div class="panel-heading">
+                Result
+            </div>
+            <div class="panel-body">
+                <textarea></textarea>
+            </div>            
         <div id="xml"></div>
+    </div>            
     </div>
+    
+    
+    
 </body>
 </html>
