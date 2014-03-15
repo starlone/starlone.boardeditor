@@ -3,16 +3,18 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Map Editor</title>
-    <style>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <style type="text/css">
         body{
-            background:#EEE;
             margin: 0;
             padding: 0;
             font: Arial;
-        }
-        .new_map{
-            margin:5px 10px;
-        }
+        }        
         form#dialog label{
             float:left;
             width: 90px;
@@ -27,6 +29,7 @@
             width: 40px;
             height: 40px;
             padding: 5px;
+            -moz-box-sizing: content-box;
         }        
         .cel .x, .cel .y {            
             margin: 2px;
@@ -39,13 +42,10 @@
             color: red;
             float:right;
         }
-        .toolbar{
-            padding: 6px;
+        .navbar{
+            margin-bottom: 0;
         }
     </style>
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css" />
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
     <script type="text/javascript">
 	    function clear_unique(type_cel){
 	    	var others = $(".cel").find("input[name=type_cel][value="+ type_cel +"]");	    			
@@ -156,6 +156,7 @@
     </script>
 </head>
 <body>
+
     <form id="dialog" action="" method="get" style="display:none;">
         <div>
             <label for="len_lines">Lines</label>
@@ -166,27 +167,45 @@
             <input type="text" id="len_columns" name="len_columns" class="spinner"/>
         </div>
     </form>
-    
-    <div id="header" class="toolbar ui-widget-header ui-corner-all">
-        <span id="logo">Hero Master</span>
-        <button class="new_map button">New Map</button>
-        <button class="build button">Build XML</button>
+      
+    <div class="navbar navbar-default" role="navigation">        
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Board Editor</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">                    
+                    <li><a class="new_map" href="#">New Board</a></li>
+                    <li><a class="build" href="#">Build XML</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default">
+        <div class="container">
+            <fieldset id="types">
+                Types:            
+                <input class="unique" type="radio" name="type" id="type_begin" value="begin"/>
+	            <label for="type_begin">Begin</label>
+	            <input class="unique" type="radio" name="type" id="type_end" value="end"/>
+	            <label for="type_end">End</label>
+	            <input type="radio" name="type" id="type_path" value="path"/>
+	            <label for="type_path">Path</label>
+            </fieldset>
+        
+        </div>
+                        
     </div>
     
-    <div class="toolbar ui-widget-header ui-corner-all">                 
-        <fieldset id="types">
-            Types:            
-            <input class="unique" type="radio" name="type" id="type_begin" value="begin"/>
-	        <label for="type_begin">Begin</label>
-	        <input class="unique" type="radio" name="type" id="type_end" value="end"/>
-	        <label for="type_end">End</label>
-	        <input type="radio" name="type" id="type_path" value="path"/>
-	        <label for="type_path">Path</label>
-        </fieldset>                
-    </div>
     
-    
-    <div id="content">
+    <div id="content" class="container">
 
     </div>
     
